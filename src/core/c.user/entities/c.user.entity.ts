@@ -1,15 +1,12 @@
-import { Gender, Role, User } from '@prisma/client';
+import { User } from '@prisma/client';
 
 export class CUserEntity implements User {
-  id: number;
+  id: string;
   created: Date;
   updated: Date;
   name: string;
   email: string;
-  password: string;
-  phone: string;
-  gender: Gender;
-  isActive: boolean;
-  profileImgId: number;
-  role: Role;
+  isAuth: boolean;
+  else01: string;
+  else02: string;
 }

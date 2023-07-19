@@ -62,6 +62,11 @@ export const ExceptionCodeList = {
       '요청 오류',
       HttpStatus.BAD_REQUEST,
     ),
+    EMAIL_SEND_ERROR: new ExceptionCode(
+      'EMAIL_SEND_ERROR',
+      '이메일 전송오류',
+      HttpStatus.BAD_REQUEST,
+    ),
   },
   FILE: {
     FILE_NOT_FOUND: new ExceptionCode(

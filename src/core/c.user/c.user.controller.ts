@@ -1,10 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
 import { CUserService } from './c.user.service';
-import { CreateCUserDto } from './dto/create-c.user.dto';
-import { UpdateCUserDto } from './dto/update-c.user.dto';
+import { CreateCUserDto } from './dto/create.user.dto';
 import { APIResponseObj, HttpUtils } from 'src/libs/core/utils/http.utils';
-import { ApiCreatedResponse } from '@nestjs/swagger';
-import { CUserEntity } from './entities/c.user.entity';
+import { UpdateAuthUserDto } from './dto/update.auth.user.dto';
 
 /**
  * 사용자
@@ -13,6 +11,11 @@ import { CUserEntity } from './entities/c.user.entity';
 export class CUserController {
   constructor(private readonly cUserService: CUserService) {}
 
+  @Post('check.email')
+  async checkEmail(@Body() body: any) {
+    const email = body.email;
+    return this.cUserService.checkEmail(email);
+  }
   /**
    * 사용자 추가
    * @param createCUserDto
@@ -22,17 +25,9 @@ export class CUserController {
   async create(
     @Body() createCUserDto: CreateCUserDto,
   ): Promise<APIResponseObj> {
+    console.log(createCUserDto);
     const res = await this.cUserService.create(createCUserDto);
     return HttpUtils.makeAPIResponse(true, res);
-  }
-
-  /**
-   * 사용자 전체 조회
-   * @returns
-   */
-  @Get()
-  async findAll(): Promise<APIResponseObj> {
-    return HttpUtils.makeAPIResponse(true, this.cUserService.findAll());
   }
 
   /**
@@ -42,7 +37,11 @@ export class CUserController {
    */
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<APIResponseObj> {
-    return HttpUtils.makeAPIResponse(true, this.cUserService.findOne(+id));
+    const res = HttpUtils.makeAPIResponse(
+      true,
+      await this.cUserService.findById(id),
+    );
+    return res;
   }
 
   /**
@@ -54,11 +53,11 @@ export class CUserController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateCUserDto: UpdateCUserDto,
+    @Body() updateCUserDto: UpdateAuthUserDto,
   ): Promise<APIResponseObj> {
     return HttpUtils.makeAPIResponse(
       true,
-      await this.cUserService.update(+id, updateCUserDto),
+      await this.cUserService.updateAuth(updateCUserDto),
     );
   }
 }

@@ -14,12 +14,38 @@ datasource db {
 
 model User{
   id      String  @id @default(uuid())
+
   created DateTime @default(now())
   updated DateTime @updatedAt
 
   name String
   email String @unique
 
-  else01 String
-  else02 String  
+  isAuth Boolean @default(false)
+
+  else01 String?
+  else02 String?  
+}
+
+
+model Order{
+  id      String  @id @default(uuid())
+
+  created DateTime @default(now())
+  updated DateTime @updatedAt
+
+  userId String
+
+  startLng String
+  startLat String
+  start String
+
+  goalLng String
+  goalLat String
+  goal String
+  
+  totalPrice Int? @default(0)
+  status String @default("ORDER")
+  approvalDate String?
+
 }
