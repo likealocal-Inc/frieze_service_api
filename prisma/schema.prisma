@@ -38,11 +38,11 @@ model Order{
 
   startLng String
   startLat String
-  start String
+  // start String
 
   goalLng String
   goalLat String
-  goal String
+  // goal String
   
   totalPrice Int? @default(0)
   status String @default("ORDER")

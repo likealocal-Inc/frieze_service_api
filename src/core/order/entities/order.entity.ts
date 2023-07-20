@@ -7,10 +7,10 @@ export class OrderEntity implements Order {
   userId: string;
   startLng: string;
   startLat: string;
-  start: string;
+  // start: string;
   goalLng: string;
   goalLat: string;
-  goal: string;
+  // goal: string;
   totalPrice: number;
   status: string;
   approvalDate: string;
