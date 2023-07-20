@@ -35,7 +35,7 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 /files
-.env.*
+.env
 yarn.lock
 
 # $ git rm -r --cached . // cache에 기록된 tracking 중인 파일리스트 삭제
