@@ -17,4 +17,10 @@ export class EmailController {
     this.cEamilService.send(emailSendDtop);
     return HttpUtils.makeAPIResponse(true);
   }
+
+  @Post('/authEmail')
+  authEmail(@Body() body: any): APIResponseObj {
+    this.cEamilService.authEmail(body.email, body.authUrl, body.userId);
+    return HttpUtils.makeAPIResponse(true);
+  }
 }

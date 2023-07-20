@@ -6,10 +6,15 @@ import { CustomException } from 'src/config/core/exceptions/custom.exception';
 import { ExceptionCodeList } from 'src/config/core/exceptions/exception.code';
 import { SecurityUtils } from 'src/libs/core/utils/security.utils';
 import { UpdateAuthUserDto } from './dto/update.auth.user.dto';
+import { EmailService } from '../mail/email.service';
+import { ElseUtils } from 'src/libs/core/utils/else.utils';
 
 @Injectable()
 export class CUserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly emailService: EmailService,
+  ) {}
 
   /**
    * 이메일 여부 확인
@@ -17,14 +22,20 @@ export class CUserService {
    * @returns
    */
   async checkEmail(email: string): Promise<boolean> {
-    // 이메일 복호화
-    const emailStr = await SecurityUtils.decryptText(email);
-    console.log(emailStr);
+    try {
+      // 이메일 복호화
+      const emailStr = await SecurityUtils.decryptText(email);
+      console.log(emailStr);
 
-    const count = await this.prisma.user.count({ where: { email: emailStr } });
-    console.log(count);
-    if (count > 0) return true;
-    return false;
+      const count = await this.prisma.user.count({
+        where: { email: emailStr },
+      });
+      console.log(count);
+      if (count > 0) return true;
+      return false;
+    } catch (error) {
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
+    }
   }
 
   /**
@@ -33,21 +44,31 @@ export class CUserService {
    * @returns
    */
   async create(createCUserDto: CreateCUserDto): Promise<CUserEntity> {
-    // 사용자 존재 하는지 이메일로 확인
-    const users: CUserEntity[] = await this.prisma.user.findMany({
-      where: { email: createCUserDto.email },
-    });
-
-    if (users.length > 0) {
-      throw new CustomException(ExceptionCodeList.USER.ALREADY_EXIST_USER);
-    } else {
-      return await this.prisma.user.create({
-        data: {
-          name: SecurityUtils.decryptText(createCUserDto.name),
-          email: SecurityUtils.decryptText(createCUserDto.email),
-          isAuth: false,
-        },
+    try {
+      // 사용자 존재 하는지 이메일로 확인
+      const users: CUserEntity[] = await this.prisma.user.findMany({
+        where: { email: createCUserDto.email },
       });
+
+      if (users.length > 0) {
+        throw new CustomException(ExceptionCodeList.USER.ALREADY_EXIST_USER);
+      } else {
+        const user = await this.prisma.user.create({
+          data: {
+            name: SecurityUtils.decryptText(createCUserDto.name),
+            email: SecurityUtils.decryptText(createCUserDto.email),
+            isAuth: false,
+          },
+        });
+
+        await this.emailService.send(
+          ElseUtils.makeAuthEmail(user.email, createCUserDto.authUrl, user.id),
+        );
+
+        return user;
+      }
+    } catch (error) {
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
     }
   }
 
@@ -57,9 +78,13 @@ export class CUserService {
    * @returns
    */
   async findById(id: string): Promise<CUserEntity> {
-    return await this.prisma.user.findFirst({
-      where: { id },
-    });
+    try {
+      return await this.prisma.user.findFirst({
+        where: { id },
+      });
+    } catch (error) {
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
+    }
   }
 
   /**
@@ -68,14 +93,27 @@ export class CUserService {
    * @returns
    */
   async findByEmail(email: string): Promise<CUserEntity> {
-    return await this.prisma.user.findUnique({ where: { email } });
+    try {
+      return await this.prisma.user.findUnique({ where: { email } });
+    } catch (error) {
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
+    }
   }
 
+  /**
+   *
+   * @param updateCUserDto
+   * @returns
+   */
   // 인증 여부 업데이트
   async updateAuth(updateCUserDto: UpdateAuthUserDto): Promise<CUserEntity> {
-    return await this.prisma.user.update({
-      where: { id: updateCUserDto.id },
-      data: { isAuth: updateCUserDto.isAuth },
-    });
+    try {
+      return await this.prisma.user.update({
+        where: { id: updateCUserDto.id },
+        data: { isAuth: updateCUserDto.isAuth },
+      });
+    } catch (error) {
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
+    }
   }
 }

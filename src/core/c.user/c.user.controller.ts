@@ -11,10 +11,18 @@ import { UpdateAuthUserDto } from './dto/update.auth.user.dto';
 export class CUserController {
   constructor(private readonly cUserService: CUserService) {}
 
+  /**
+   * 이메일 체크
+   * @param body
+   * @returns
+   */
   @Post('check.email')
   async checkEmail(@Body() body: any) {
     const email = body.email;
-    return this.cUserService.checkEmail(email);
+    return HttpUtils.makeAPIResponse(
+      true,
+      await this.cUserService.checkEmail(email),
+    );
   }
   /**
    * 사용자 추가
@@ -25,7 +33,6 @@ export class CUserController {
   async create(
     @Body() createCUserDto: CreateCUserDto,
   ): Promise<APIResponseObj> {
-    console.log(createCUserDto);
     const res = await this.cUserService.create(createCUserDto);
     return HttpUtils.makeAPIResponse(true, res);
   }
@@ -45,14 +52,27 @@ export class CUserController {
   }
 
   /**
-   * 사용자 업데이트
+   * 이메일로 조회
+   * @param email
+   * @returns
+   */
+  @Get('email/:email')
+  async findByEmail(@Param('email') email: string): Promise<APIResponseObj> {
+    const res = HttpUtils.makeAPIResponse(
+      true,
+      await this.cUserService.findByEmail(email),
+    );
+    return res;
+  }
+
+  /**
+   * 사용자 업데이
    * @param id
    * @param updateCUserDto
    * @returns
    */
-  @Patch(':id')
-  async update(
-    @Param('id') id: string,
+  @Patch()
+  async updateAuth(
     @Body() updateCUserDto: UpdateAuthUserDto,
   ): Promise<APIResponseObj> {
     return HttpUtils.makeAPIResponse(

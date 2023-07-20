@@ -13,11 +13,11 @@ export const SecurityUtils = {
   },
 
   encryptText: (originalText: string) => {
-    return SecurityUtils.xorEncryptDecrypt(originalText, 45);
+    return SecurityUtils.xorEncryptDecrypt(originalText, 123);
   },
 
   decryptText: (encryptedText: string) => {
-    return SecurityUtils.xorEncryptDecrypt(encryptedText, 45);
+    return SecurityUtils.xorEncryptDecrypt(encryptedText, 123);
   },
 
   /**

@@ -5,6 +5,7 @@ import * as nodemailer from 'nodemailer';
 import { CustomException } from 'src/config/core/exceptions/custom.exception';
 import { ExceptionCodeList } from 'src/config/core/exceptions/exception.code';
 import { EmailSendDto } from './dto/email.send.dto';
+import { ElseUtils } from 'src/libs/core/utils/else.utils';
 
 @Injectable()
 export class EmailService {
@@ -25,9 +26,17 @@ export class EmailService {
    * @param emailOption
    * @returns
    */
-  send(emailOption: EmailSendDto): void {
+  async send(emailOption: EmailSendDto): Promise<void> {
     try {
       this.mail.sendMail(emailOption);
+    } catch (err) {
+      throw new CustomException(ExceptionCodeList.COMMON.EMAIL_SEND_ERROR, err);
+    }
+  }
+
+  async authEmail(email, authUrl, userId): Promise<void> {
+    try {
+      await this.send(ElseUtils.makeAuthEmail(email, authUrl, userId));
     } catch (err) {
       throw new CustomException(ExceptionCodeList.COMMON.EMAIL_SEND_ERROR, err);
     }
