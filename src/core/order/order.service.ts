@@ -4,6 +4,7 @@ import { UpdateOrderDto } from './dto/update.order.dto';
 import { PrismaService } from 'src/config/core/prisma/prisma.service';
 import { CustomException } from 'src/config/core/exceptions/custom.exception';
 import { ExceptionCodeList } from 'src/config/core/exceptions/exception.code';
+import { DateUtils } from 'src/libs/core/utils/date.utils';
 
 @Injectable()
 export class OrderService {
@@ -16,7 +17,10 @@ export class OrderService {
    */
   async create(createOrderDto: CreateOrderDto) {
     try {
-      await this.prisma.order.create({ data: createOrderDto });
+      const now = DateUtils.nowString('YYYY-MM-DD hh:mm');
+      return await this.prisma.order.create({
+        data: { ...createOrderDto, approvalDate: now },
+      });
     } catch (error) {
       throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
     }
