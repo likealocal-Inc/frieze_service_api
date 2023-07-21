@@ -33,7 +33,10 @@ export class OrderService {
    */
   async findByUserId(userId: string) {
     try {
-      return await this.prisma.order.findMany({ where: { userId } });
+      return await this.prisma.order.findMany({
+        where: { userId },
+        orderBy: { created: 'desc' },
+      });
     } catch (error) {
       throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
     }
