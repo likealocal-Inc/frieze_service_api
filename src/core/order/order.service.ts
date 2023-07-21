@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create.order.dto';
 import { UpdateOrderDto } from './dto/update.order.dto';
 import { PrismaService } from 'src/config/core/prisma/prisma.service';
+import { CustomException } from 'src/config/core/exceptions/custom.exception';
+import { ExceptionCodeList } from 'src/config/core/exceptions/exception.code';
 
 @Injectable()
 export class OrderService {
@@ -13,16 +15,24 @@ export class OrderService {
    * @returns
    */
   async create(createOrderDto: CreateOrderDto) {
-    return await this.prisma.order.create({ data: createOrderDto });
+    try {
+      await this.prisma.order.create({ data: createOrderDto });
+    } catch (error) {
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
+    }
   }
 
   /**
-   * 사용자 아이디로 주문조회
+   * 사용자 아이디로 주문조
    * @param userId
    * @returns
    */
   async findByUserId(userId: string) {
-    return await this.prisma.order.findMany({ where: { userId } });
+    try {
+      return await this.prisma.order.findMany({ where: { userId } });
+    } catch (error) {
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
+    }
   }
 
   /**
@@ -31,7 +41,11 @@ export class OrderService {
    * @returns
    */
   async findById(id: string) {
-    return await this.prisma.order.findFirst({ where: { id } });
+    try {
+      return await this.prisma.order.findFirst({ where: { id } });
+    } catch (error) {
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
+    }
   }
 
   /**
@@ -41,9 +55,13 @@ export class OrderService {
    * @returns
    */
   async update(id: string, updateOrderDto: UpdateOrderDto) {
-    return await this.prisma.order.update({
-      where: { id },
-      data: updateOrderDto,
-    });
+    try {
+      return await this.prisma.order.update({
+        where: { id },
+        data: updateOrderDto,
+      });
+    } catch (error) {
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
+    }
   }
 }

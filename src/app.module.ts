@@ -18,6 +18,7 @@ import { CUserModule } from './core/c.user/c.user.module';
 import { HttpExceptionFilter } from './config/core/filters/http.exception.filter';
 import { OrderModule } from './core/order/order.module';
 import { EmailModule } from './core/mail/email.module';
+import { InfoModule } from './core/info/info.module';
 
 @Module({
   imports: [
@@ -36,6 +37,8 @@ import { EmailModule } from './core/mail/email.module';
     OrderModule,
 
     EmailModule,
+
+    InfoModule,
   ],
   controllers: [],
   providers: [

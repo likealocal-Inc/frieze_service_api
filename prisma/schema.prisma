@@ -39,13 +39,23 @@ model Order{
   startLng String
   startLat String
   // start String
-
+  startAddress String
+  
   goalLng String
   goalLat String
   // goal String
+  goalAddress String
   
-  totalPrice Int? @default(0)
+  priceInfo String
   status String @default("ORDER")
   approvalDate String?
 
+}
+
+
+model Info{
+  id      String  @id @default(uuid())
+  exchangeRate Int @default(1270)
+  else01 String
+  else02 String
 }

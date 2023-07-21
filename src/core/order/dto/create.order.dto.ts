@@ -2,9 +2,10 @@ export class CreateOrderDto {
   userId: string;
   startLng: string;
   startLat: string;
-  // start: string;
+  startAddress: string;
   goalLng: string;
   goalLat: string;
-  // goal: string;
+  goalAddress: string;
   status: string;
+  priceInfo: string;
 }
