@@ -8,6 +8,8 @@ import { SecurityUtils } from 'src/libs/core/utils/security.utils';
 import { UpdateAuthUserDto } from './dto/update.auth.user.dto';
 import { EmailService } from '../mail/email.service';
 import { ElseUtils } from 'src/libs/core/utils/else.utils';
+import { promises as fs } from 'fs';
+import { Files } from 'src/config/core/files/files';
 
 @Injectable()
 export class CUserService {
@@ -61,9 +63,16 @@ export class CUserService {
           },
         });
 
-        await this.emailService.send(
-          ElseUtils.makeAuthEmail(user.email, createCUserDto.authUrl, user.id),
+        const file = new Files();
+        let data = await file.read('./static/mail.html');
+
+        data = data.replace('__NAME__', user.name);
+        data = data.replace(
+          '__AUTHURL__',
+          `${createCUserDto.authUrl}?${user.id}`,
         );
+
+        this.emailService.authEmail2('hanblues@gmail.com', data);
 
         return user;
       }

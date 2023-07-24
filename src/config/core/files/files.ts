@@ -29,6 +29,10 @@ export class Files {
     });
   }
 
+  async read(path: string) {
+    return this.fs.readFileSync(path, 'utf8');
+  }
+
   /**
    * 해당 폴더 파일리스트 가져오기
    * @param path

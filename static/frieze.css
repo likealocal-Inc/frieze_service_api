@@ -1,0 +1,228 @@
+Preview
+
+Code
+
+Style
+
+CSS Vars
+
+
+25% too much Groups
+Groups: 25%, Auto layout: 41% - Get better code output by using Auto layout and avoid using groups.
+
+
+Copy
+.voucher,
+.voucher * {
+  box-sizing: border-box;
+}
+.voucher {
+  background: #ffffff;
+  width: 1920px;
+  height: 844px;
+  position: relative;
+  overflow: hidden;
+}
+.line {
+  position: absolute;
+  left: 0px;
+  top: 513px;
+  transform: translate(0px, -0.5px);
+  overflow: visible;
+}
+.frame-1171274918 {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  position: absolute;
+  left: calc(50% - 300px);
+  top: 377px;
+}
+.button-ok {
+  flex-shrink: 0;
+  width: 252px;
+  height: 56px;
+  position: relative;
+}
+.button-ok2 {
+  width: 252px;
+  height: 56px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.button {
+  background: var(--primary, #0085fe);
+  border-radius: 4px;
+  padding: 16px 40px 16px 40px;
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  width: 252px;
+  height: 56px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+. {
+  color: #ffffff;
+  text-align: left;
+  font: 400 16px/24px "Noto Sans", sans-serif;
+  position: relative;
+}
+.group-1171279645 {
+  position: absolute;
+  inset: 0;
+}
+.group-1171279670 {
+  width: 262px;
+  height: 77px;
+  position: static;
+}
+.i-1 {
+  width: 77.7px;
+  height: 77px;
+  position: absolute;
+  left: 844.3px;
+  top: 31px;
+}
+.logo-symbol {
+  width: 160.39px;
+  height: 25px;
+  position: absolute;
+  left: 660px;
+  top: 57px;
+  overflow: hidden;
+}
+.symbol-sep {
+  position: absolute;
+  inset: 0;
+}
+.vector {
+  position: absolute;
+  left: 2.43px;
+  top: 20px;
+  overflow: visible;
+}
+.vector2 {
+  position: absolute;
+  left: 12.15px;
+  top: 0px;
+  overflow: visible;
+}
+.group {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  overflow: visible;
+}
+.logo {
+  position: absolute;
+  left: 34.02px;
+  top: 2.5px;
+  overflow: visible;
+}
+.line-170 {
+  border-style: solid;
+  border-color: #bbbbbb;
+  border-width: 1px 0 0 0;
+  width: 21px;
+  height: 0px;
+  position: absolute;
+  left: 836.33px;
+  top: 59px;
+  transform-origin: 0 0;
+  transform: rotate(90deg) scale(1, 1);
+}
+.line2 {
+  position: absolute;
+  left: calc(50% - 300px);
+  top: 108px;
+  transform: translate(0px, -1px);
+  overflow: visible;
+}
+.hello-kyoojin-kim-please-click-the-email-verification-button-below-to-complete-the-membership-registration {
+  color: #000000;
+  text-align: left;
+  font: 400 14px "Noto Sans", sans-serif;
+  position: absolute;
+  left: calc(50% - 300px);
+  top: 222px;
+  width: 588px;
+}
+.member-registration-confirmation {
+  color: #000000;
+  text-align: left;
+  font: 700 22px "Noto Sans", sans-serif;
+  position: absolute;
+  left: calc(50% - 300px);
+  top: 168px;
+  width: 588px;
+  height: 30px;
+}
+.if-you-have-never-registered-as-a-member-through-this-email-please-ignore-or-delete-this-email {
+  color: #000000;
+  text-align: left;
+  font: 400 14px "Noto Sans", sans-serif;
+  position: absolute;
+  left: calc(50% - 300px);
+  top: 280px;
+  width: 600px;
+}
+.this-email-is-for-outgoing-use-only-and-cannot-be-answered-if-you-have-any-questions-please-contact-the-customer-service-center {
+  color: var(--gray-5, #808080);
+  text-align: left;
+  font: 400 14px "Noto Sans", sans-serif;
+  position: absolute;
+  left: 660px;
+  top: 656px;
+  width: 600px;
+}
+.frame-427320759 {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 600px;
+  position: absolute;
+  left: 662px;
+  top: 547px;
+}
+.frame-427320757 {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.likea-local {
+  color: var(--gray-5, #808080);
+  text-align: left;
+  font: 600 14px "Noto Sans", sans-serif;
+  position: relative;
+}
+.frame-427320758 {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.copyright-2023-mhq-inc-all-rights-reserved {
+  color: var(--gray-5, #808080);
+  text-align: left;
+  font: 400 14px "Noto Sans", sans-serif;
+  position: relative;
+  width: 600px;
+}
+
+Download ZIP
