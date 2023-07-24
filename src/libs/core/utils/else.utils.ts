@@ -9,7 +9,7 @@ export const ElseUtils = {
   makeAuthEmail2: (to, html) => {
     return {
       to: to,
-      subject: 'Prieze Taxi User Auth Mail',
+      subject: '[LikeALocal] Email Address Confirmation Mail',
       html: html,
     };
   },
