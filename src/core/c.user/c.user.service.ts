@@ -7,8 +7,6 @@ import { ExceptionCodeList } from 'src/config/core/exceptions/exception.code';
 import { SecurityUtils } from 'src/libs/core/utils/security.utils';
 import { UpdateAuthUserDto } from './dto/update.auth.user.dto';
 import { EmailService } from '../mail/email.service';
-import { ElseUtils } from 'src/libs/core/utils/else.utils';
-import { promises as fs } from 'fs';
 import { Files } from 'src/config/core/files/files';
 
 @Injectable()
@@ -23,19 +21,19 @@ export class CUserService {
    * @param email
    * @returns
    */
-  async checkEmail(email: string): Promise<boolean> {
+  async checkEmail(email: string): Promise<CUserEntity> {
+    console.log(email);
     try {
       // 이메일 복호화
-      const emailStr = await SecurityUtils.decryptText(email);
-      console.log(emailStr);
+      const emailStr = SecurityUtils.decryptText(email);
 
-      const count = await this.prisma.user.count({
+      console.log(emailStr);
+      const user = await this.prisma.user.findFirst({
         where: { email: emailStr },
       });
-      console.log(count);
-      if (count > 0) return true;
-      return false;
+      return user;
     } catch (error) {
+      console.log(error);
       throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
     }
   }
@@ -63,16 +61,23 @@ export class CUserService {
           },
         });
 
-        const file = new Files();
-        let data = await file.read('./static/mail.html');
-
-        data = data.replace('__NAME__', user.name);
-        data = data.replace(
-          '__AUTHURL__',
-          `${createCUserDto.authUrl}?${user.id}`,
+        this.sendAuthMail(
+          user.name,
+          user.email,
+          createCUserDto.authUrl,
+          user.id,
         );
+        // );
+        // const file = new Files();
+        // let data = await file.read('./static/mail.html');
 
-        this.emailService.authEmail2('hanblues@gmail.com', data);
+        // data = data.replace('__NAME__', user.name);
+        // data = data.replace(
+        //   '__AUTHURL__',
+        //   `${createCUserDto.authUrl}?${user.id}`,
+        // );
+
+        // this.emailService.authEmail2(user.email, data);
 
         return user;
       }
@@ -81,9 +86,32 @@ export class CUserService {
     }
   }
 
+  async sendAuthEmail(userIdStr: string, authUrlStr: string) {
+    try {
+      const userId = SecurityUtils.decryptText(userIdStr);
+      const authUrl = SecurityUtils.decryptText(authUrlStr);
+      const user = await this.prisma.user.findFirst({ where: { id: userId } });
+      console.log('user', user);
+      await this.sendAuthMail(user.name, user.email, authUrl, user.id);
+      return true;
+    } catch (error) {
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
+    }
+  }
+
+  async sendAuthMail(name: string, email: string, authUrl, userId: string) {
+    const file = new Files();
+    let data = await file.read('./static/mail.html');
+
+    data = data.replace('__NAME__', name);
+    data = data.replace('__AUTHURL__', `${authUrl}?${userId}`);
+
+    this.emailService.authEmail2(email, data);
+  }
+
   /**
    * 사용자 찾기
-   * @param id
+   * @param i
    * @returns
    */
   async findById(id: string): Promise<CUserEntity> {

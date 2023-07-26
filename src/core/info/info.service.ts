@@ -29,8 +29,6 @@ export class InfoService {
   async updateRate(newRate: number, token: string) {
     try {
       let info = await this.findOne();
-      console.log(info.else01);
-      console.log(token);
       if (info.else01 === token) {
         info = await this.prisma.info.update({
           where: { id: info.id },

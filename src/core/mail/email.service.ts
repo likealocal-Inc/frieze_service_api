@@ -41,9 +41,9 @@ export class EmailService {
       throw new CustomException(ExceptionCodeList.COMMON.EMAIL_SEND_ERROR, err);
     }
   }
-  async authEmail2(email, html): Promise<void> {
+  authEmail2(email, html) {
     try {
-      await this.send(ElseUtils.makeAuthEmail2(email, html));
+      this.send(ElseUtils.makeAuthEmail2(email, html));
     } catch (err) {
       throw new CustomException(ExceptionCodeList.COMMON.EMAIL_SEND_ERROR, err);
     }

@@ -65,6 +65,14 @@ export class CUserController {
     return res;
   }
 
+  @Patch('send.auth.email')
+  async sendAuthMail(@Body() body: any): Promise<APIResponseObj> {
+    const res = HttpUtils.makeAPIResponse(
+      true,
+      await this.cUserService.sendAuthEmail(body.skdidd, body.kfkkdm),
+    );
+    return res;
+  }
   /**
    * 사용자 업데이
    * @param id
