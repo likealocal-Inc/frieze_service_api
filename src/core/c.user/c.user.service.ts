@@ -86,12 +86,13 @@ export class CUserService {
     }
   }
 
-  async sendAuthEmail(userIdStr: string, authUrlStr: string) {
+  async sendAuthEmail(userEmailStr: string, authUrlStr: string) {
     try {
-      const userId = SecurityUtils.decryptText(userIdStr);
+      const userEmail = SecurityUtils.decryptText(userEmailStr);
       const authUrl = SecurityUtils.decryptText(authUrlStr);
-      const user = await this.prisma.user.findFirst({ where: { id: userId } });
-      console.log('user', user);
+      const user = await this.prisma.user.findFirst({
+        where: { email: userEmail },
+      });
       await this.sendAuthMail(user.name, user.email, authUrl, user.id);
       return true;
     } catch (error) {
