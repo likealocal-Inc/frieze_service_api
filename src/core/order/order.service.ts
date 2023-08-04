@@ -6,9 +6,41 @@ import { CustomException } from 'src/config/core/exceptions/custom.exception';
 import { ExceptionCodeList } from 'src/config/core/exceptions/exception.code';
 import { DateUtils } from 'src/libs/core/utils/date.utils';
 
+export enum STATUS {
+  PAYMENT = 'PAYMENT',
+  DISPATCH_REQUEST = 'DISPATCH_REQUEST',
+  CANCEL_REQUEST = 'CANCEL_REQUEST',
+  CANCEL_DONE = 'CANCEL_DONE',
+  DISPATCH_DONE = 'DISPATCH_DONE',
+  DONE = 'DONE',
+}
+export function isValidSTATUS(value: any): value is STATUS {
+  return Object.values(STATUS).includes(value);
+}
+
 @Injectable()
 export class OrderService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async setStatus(id: string, status: string) {
+    // 상태값 확인
+    if (isValidSTATUS(status) === false) {
+      throw new CustomException(
+        ExceptionCodeList.COMMON.WRONG_REQUEST,
+        'worng status',
+      );
+    }
+
+    try {
+      await this.prisma.order.update({
+        where: { id },
+        data: { status: status },
+      });
+      return status;
+    } catch (error) {
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
+    }
+  }
 
   /**
    * 주문생성
@@ -19,7 +51,11 @@ export class OrderService {
     try {
       const now = DateUtils.nowString('YYYY-MM-DD hh:mm');
       return await this.prisma.order.create({
-        data: { ...createOrderDto, approvalDate: now },
+        data: {
+          ...createOrderDto,
+          approvalDate: now,
+          status: STATUS.PAYMENT.toString(),
+        },
       });
     } catch (error) {
       throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);

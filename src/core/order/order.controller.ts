@@ -42,4 +42,12 @@ export class OrderController {
       await this.orderService.update(id, updateOrderDto),
     );
   }
+
+  @Get('status/:id/:status')
+  async setStatus(@Param('id') id: string, @Param('status') status: string) {
+    return HttpUtils.makeAPIResponse(
+      true,
+      await this.orderService.setStatus(id, status),
+    );
+  }
 }
