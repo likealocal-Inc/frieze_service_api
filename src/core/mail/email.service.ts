@@ -13,10 +13,10 @@ export class EmailService {
 
   constructor() {
     this.mail = nodemailer.createTransport({
-      service: 'Gmail',
+      service: 'gmail',
       auth: {
-        user: 'likealocal.korea2@gmail.com',
-        pass: 'qnrppwatbzdrzbun',
+        user: 'hanblues202201@gmail.com',
+        pass: 'xuxttjesmuwgiyze',
       },
     });
   }

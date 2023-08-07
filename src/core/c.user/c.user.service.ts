@@ -61,13 +61,13 @@ export class CUserService {
           },
         });
 
-        this.sendAuthMail(
+        await this.sendAuthMail(
           user.name,
           user.email,
           createCUserDto.authUrl,
           user.id,
         );
-        // );
+
         // const file = new Files();
         // let data = await file.read('./static/mail.html');
 
