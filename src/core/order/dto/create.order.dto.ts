@@ -8,4 +8,5 @@ export class CreateOrderDto {
   goalAddress: string;
   status: string;
   priceInfo: string;
+  aeindifo: string;
 }

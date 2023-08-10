@@ -12,6 +12,13 @@ export class ExceptionCode {
 }
 
 export const ExceptionCodeList = {
+  PAYMENT: {
+    WRONG: new ExceptionCode(
+      'WRONG',
+      '결제관련 데이터 오류발생',
+      HttpStatus.BAD_REQUEST,
+    ),
+  },
   AUTH: {
     UNAUTHORIZED: new ExceptionCode(
       'UNAUTHORIZED',

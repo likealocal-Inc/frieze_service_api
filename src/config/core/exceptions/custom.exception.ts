@@ -7,7 +7,7 @@ import { ExceptionCode } from './exception.code';
 export class CustomException extends HttpException {
   constructor(codeInfo: ExceptionCode, message = '') {
     const code = codeInfo.getCode();
-    const codeMessage = `${codeInfo.getMessage()} ${message}`;
+    const codeMessage = `${codeInfo.getMessage()}:${message}`;
     super({ code, codeMessage }, codeInfo.getStatus());
   }
 }

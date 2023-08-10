@@ -59,3 +59,28 @@ model Info{
   else01 String
   else02 String
 }
+
+model Payment{
+  id      String  @id @default(uuid())
+
+  created DateTime @default(now())
+  updated DateTime @updatedAt
+
+  orderId String? @default("-1")
+  email String
+
+  amt Int
+
+  merchantID String
+  ediDate String
+  signData String
+  moid String
+  paymentToken String
+  tempKey String?
+
+  authToken String?
+  signature String?
+  txTid String?
+
+  successInfo String?
+}
