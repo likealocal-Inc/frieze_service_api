@@ -359,13 +359,15 @@ export class OrderService {
   }
 
   async paymentCancel(id) {
+    let paymentEntity;
+    let cancelRes: any;
     try {
-      const paymentEntity = await this.prisma.payment.findFirst({
+      paymentEntity = await this.prisma.payment.findFirst({
         where: { id },
       });
 
       // 실제 결제 처리
-      const res: any = await axios.post(
+      cancelRes = await axios.post(
         `${process.env.PAYMENT_URL}/api/nicepay/cancel`,
         {
           moid: paymentEntity.moid,
@@ -379,9 +381,16 @@ export class OrderService {
           },
         },
       );
+    } catch (err) {
+      throw new CustomException(
+        ExceptionCodeList.PAYMENT.WRONG,
+        err.response.data.data.description.codeMessage,
+      );
+    }
 
-      const resData = res.data;
-      console.log(resData);
+    try {
+      const resData = cancelRes.data;
+
       if (resData.ok) {
         // 취소 성공 후 처리
         await this.prisma.$transaction(async (tx) => {
@@ -397,21 +406,15 @@ export class OrderService {
             data: { status: 'CANCEL' },
           });
         });
-
         return resData;
       } else {
-        console.log(resData);
         throw new CustomException(
           ExceptionCodeList.PAYMENT.WRONG,
           resData.data.description.codeMessage,
         );
       }
     } catch (err) {
-      console.log(err.response.data);
-      throw new CustomException(
-        ExceptionCodeList.PAYMENT.WRONG,
-        err.response.data.data.description.codeMessage,
-      );
+      throw new CustomException(ExceptionCodeList.PAYMENT.WRONG);
     }
   }
 }
