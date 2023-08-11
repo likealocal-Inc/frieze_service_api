@@ -10,6 +10,7 @@ import { PaymentEntity } from './entities/payment.entity';
 import { OrderEntity } from './entities/order.entity';
 import { SecurityUtils } from 'src/libs/core/utils/security.utils';
 import { Response } from 'express';
+import { Prisma } from '@prisma/client';
 
 export enum STATUS {
   PAYMENT = 'PAYMENT',
@@ -342,7 +343,6 @@ export class OrderService {
             successInfo: JSON.stringify(res3.data),
           },
         });
-        console.log('ASDFASDFASDF');
         return res;
       } else {
         throw new CustomException(
@@ -351,6 +351,63 @@ export class OrderService {
         );
       }
     } catch (err) {
+      throw new CustomException(
+        ExceptionCodeList.PAYMENT.WRONG,
+        err.response.data.data.description.codeMessage,
+      );
+    }
+  }
+
+  async paymentCancel(id) {
+    try {
+      const paymentEntity = await this.prisma.payment.findFirst({
+        where: { id },
+      });
+
+      // 실제 결제 처리
+      const res: any = await axios.post(
+        `${process.env.PAYMENT_URL}/api/nicepay/cancel`,
+        {
+          moid: paymentEntity.moid,
+          cancelMsg: 'string',
+          cancelAmt: paymentEntity.amt,
+        },
+        {
+          headers: {
+            authorization: process.env.PAYMENT_KEY,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      const resData = res.data;
+      console.log(resData);
+      if (resData.ok) {
+        // 취소 성공 후 처리
+        await this.prisma.$transaction(async (tx) => {
+          // 취소정보 추가
+          await tx.payment.update({
+            where: { id },
+            data: { cancelInfo: JSON.stringify(resData) },
+          });
+
+          // 취소상태값 업데이트
+          await tx.order.update({
+            where: { id: paymentEntity.orderId },
+            data: { status: 'CANCEL' },
+          });
+        });
+
+        return resData;
+      } else {
+        console.log(resData);
+        throw new CustomException(
+          ExceptionCodeList.PAYMENT.WRONG,
+          resData.data.description.codeMessage,
+        );
+      }
+    } catch (err) {
+      console.log(err.response.data);
       throw new CustomException(
         ExceptionCodeList.PAYMENT.WRONG,
         err.response.data.data.description.codeMessage,

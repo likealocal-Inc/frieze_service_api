@@ -19,4 +19,5 @@ export class PaymentEntity implements Payment {
   txTid: string;
 
   successInfo: string;
+  cancelInfo: string;
 }

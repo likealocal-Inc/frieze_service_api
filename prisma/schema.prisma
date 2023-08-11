@@ -83,4 +83,5 @@ model Payment{
   txTid String?
 
   successInfo String?
+  cancelInfo String?
 }
