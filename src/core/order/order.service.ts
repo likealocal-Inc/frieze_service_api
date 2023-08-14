@@ -287,7 +287,6 @@ export class OrderService {
           },
         },
       );
-      console.log(res3);
 
       if (res3.data.ok === false) {
         throw new CustomException(
@@ -358,6 +357,70 @@ export class OrderService {
     }
   }
 
+  async paymentAdminCancel(orderId, type, reason) {
+    let paymentEntity;
+    let cancelRes: any;
+
+    // 실제 결제 취소처리
+    try {
+      paymentEntity = await this.prisma.payment.findFirst({
+        where: { orderId },
+      });
+
+      // 실제 결제 처리
+      cancelRes = await axios.post(
+        `${process.env.PAYMENT_URL}/api/nicepay/cancel`,
+        {
+          moid: paymentEntity.moid,
+          cancelMsg: 'string',
+          cancelAmt: paymentEntity.amt,
+        },
+        {
+          headers: {
+            authorization: process.env.PAYMENT_KEY,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+    } catch (err) {
+      throw new CustomException(
+        ExceptionCodeList.PAYMENT.WRONG,
+        err.response.data.data.description.codeMessage,
+      );
+    }
+
+    try {
+      const resData = cancelRes.data;
+
+      if (resData.ok) {
+        // 취소 성공 후 처리
+        await this.prisma.$transaction(async (tx) => {
+          // 취소정보 추가
+          await tx.payment.update({
+            where: { id: paymentEntity.id },
+            data: {
+              adminCancelInfo: JSON.stringify({ type, reason }),
+              cancelInfo: JSON.stringify(resData),
+            },
+          });
+
+          // 취소상태값 업데이트
+          await tx.order.update({
+            where: { id: paymentEntity.orderId },
+            data: { status: 'CANCEL' },
+          });
+        });
+        return resData;
+      } else {
+        throw new CustomException(
+          ExceptionCodeList.PAYMENT.WRONG,
+          resData.data.description.codeMessage,
+        );
+      }
+    } catch (err) {
+      throw new CustomException(ExceptionCodeList.PAYMENT.WRONG);
+    }
+  }
   async paymentCancel(id) {
     let paymentEntity;
     let cancelRes: any;
@@ -416,5 +479,63 @@ export class OrderService {
     } catch (err) {
       throw new CustomException(ExceptionCodeList.PAYMENT.WRONG);
     }
+  }
+
+  /**
+   * 사용자 아이디로 조회
+   * @param page
+   * @param size
+   * @param userId
+   * @returns
+   */
+  async listByUserId(page, size, userId) {
+    const users = await this.prisma.order.findMany({
+      where: { userId },
+      skip: page * size,
+      take: size,
+      orderBy: { created: 'desc' },
+    });
+    const total = await this.prisma.order.count();
+    const totalPage = Math.ceil(total / size);
+
+    return {
+      page,
+      size,
+      total,
+      totalPage,
+      data: users,
+    };
+  }
+
+  /**
+   * @param page
+   * @param size
+   * @returns
+   */
+  async list(page, size) {
+    const res = [];
+    const orders = await this.prisma.order.findMany({
+      skip: page * size,
+      take: size,
+      orderBy: { created: 'desc' },
+    });
+
+    for (let index = 0; index < orders.length; index++) {
+      const order = orders[index];
+      const user = await this.prisma.user.findFirst({
+        where: { id: order.userId },
+      });
+      res.push({ order, user });
+    }
+    const total = await this.prisma.order.count();
+    const totalPage = Math.ceil(total / size);
+
+    return {
+      page,
+      size,
+      total,
+      totalPage,
+      data: res,
+    };
   }
 }

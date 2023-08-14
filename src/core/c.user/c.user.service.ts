@@ -27,7 +27,6 @@ export class CUserService {
       // 이메일 복호화
       const emailStr = SecurityUtils.decryptText(email);
 
-      console.log(emailStr);
       const user = await this.prisma.user.findFirst({
         where: { email: emailStr },
       });
@@ -36,6 +35,24 @@ export class CUserService {
       console.log(error);
       throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
     }
+  }
+
+  async list(page, size) {
+    const users = await this.prisma.user.findMany({
+      skip: page * size,
+      take: size,
+      orderBy: { created: 'desc' },
+    });
+    const total = await this.prisma.user.count();
+    const totalPage = Math.ceil(total / size);
+
+    return {
+      page,
+      size,
+      total,
+      totalPage,
+      data: users,
+    };
   }
 
   /**

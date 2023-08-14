@@ -3,6 +3,8 @@ import { CUserService } from './c.user.service';
 import { CreateCUserDto } from './dto/create.user.dto';
 import { APIResponseObj, HttpUtils } from 'src/libs/core/utils/http.utils';
 import { UpdateAuthUserDto } from './dto/update.auth.user.dto';
+import { CustomException } from 'src/config/core/exceptions/custom.exception';
+import { ExceptionCodeList } from 'src/config/core/exceptions/exception.code';
 
 /**
  * 사용자
@@ -49,6 +51,21 @@ export class CUserController {
       await this.cUserService.findById(id),
     );
     return res;
+  }
+
+  @Get('list/:page/:size')
+  async listUser(@Param('page') page, @Param('size') size) {
+    console.log(page, size);
+    try {
+      const res = HttpUtils.makeAPIResponse(
+        true,
+        await this.cUserService.list(+page, +size),
+      );
+      return res;
+    } catch (error) {
+      console.log(error);
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST);
+    }
   }
 
   /**

@@ -20,4 +20,5 @@ export class PaymentEntity implements Payment {
 
   successInfo: string;
   cancelInfo: string;
+  adminCancelInfo: string;
 }

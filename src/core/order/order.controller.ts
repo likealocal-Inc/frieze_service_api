@@ -4,6 +4,8 @@ import { CreateOrderDto } from './dto/create.order.dto';
 import { UpdateOrderDto } from './dto/update.order.dto';
 import { HttpUtils } from 'src/libs/core/utils/http.utils';
 import { SecurityUtils } from 'src/libs/core/utils/security.utils';
+import { CustomException } from 'src/config/core/exceptions/custom.exception';
+import { ExceptionCodeList } from 'src/config/core/exceptions/exception.code';
 
 @Controller('order')
 export class OrderController {
@@ -57,6 +59,38 @@ export class OrderController {
     );
   }
 
+  @Get('list/:page/:size/:userId')
+  async listUser(
+    @Param('page') page,
+    @Param('size') size,
+    @Param('userId') userId,
+  ) {
+    try {
+      const res = HttpUtils.makeAPIResponse(
+        true,
+        await this.orderService.listByUserId(+page, +size, userId),
+      );
+      return res;
+    } catch (error) {
+      console.log(error);
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST);
+    }
+  }
+
+  @Get('list/:page/:size')
+  async lis(@Param('page') page, @Param('size') size) {
+    try {
+      const res = HttpUtils.makeAPIResponse(
+        true,
+        await this.orderService.list(+page, +size),
+      );
+      return res;
+    } catch (error) {
+      console.log(error);
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST);
+    }
+  }
+
   @Post('payment/init')
   async paymentInit(@Body() body: any) {
     if (body.kdjifnkd44333 === null || body.kdjifnkd44333 === undefined) {
@@ -77,6 +111,19 @@ export class OrderController {
     return HttpUtils.makeAPIResponse(
       true,
       await this.orderService.paymentCancel(body.id),
+    );
+  }
+
+  @Post('payment/admin/cancel')
+  async paymentAdminCancel(@Body() body: any) {
+    console.log(body);
+    return HttpUtils.makeAPIResponse(
+      true,
+      await this.orderService.paymentAdminCancel(
+        body.id,
+        body.type,
+        body.reason,
+      ),
     );
   }
 
