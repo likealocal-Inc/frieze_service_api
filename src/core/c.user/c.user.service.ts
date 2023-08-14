@@ -8,6 +8,9 @@ import { SecurityUtils } from 'src/libs/core/utils/security.utils';
 import { UpdateAuthUserDto } from './dto/update.auth.user.dto';
 import { EmailService } from '../mail/email.service';
 import { Files } from 'src/config/core/files/files';
+import { CreateCManagerDto } from './dto/create.manager.dto';
+import { ManagerEntity } from './entities/manager.entity';
+import { DateUtils } from 'src/libs/core/utils/date.utils';
 
 @Injectable()
 export class CUserService {
@@ -74,6 +77,7 @@ export class CUserService {
           data: {
             name: SecurityUtils.decryptText(createCUserDto.name),
             email: SecurityUtils.decryptText(createCUserDto.email),
+            phone: SecurityUtils.decryptText(createCUserDto.phone),
             isAuth: false,
           },
         });
@@ -170,5 +174,40 @@ export class CUserService {
     } catch (error) {
       throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
     }
+  }
+
+  /**
+   * 관리자 추가
+   * @param managerDto
+   * @returns
+   */
+  async addManager(managerDto: CreateCManagerDto) {
+    managerDto.password = SecurityUtils.encryptText(managerDto.password);
+    const manager: ManagerEntity = await this.prisma.manager.create({
+      data: managerDto,
+    });
+    manager.password = '';
+    return manager;
+  }
+
+  /**
+   * 관리자 로그인
+   * @param email
+   * @param password
+   * @returns
+   */
+  async loginManager(email, password) {
+    const manager = await this.prisma.manager.findFirst({
+      where: { email, password: SecurityUtils.encryptText(password) },
+    });
+    if (manager === undefined || manager === null) {
+      throw new CustomException(ExceptionCodeList.MANAGER.FAIL_LOGIN);
+    }
+    await this.prisma.manager.update({
+      where: { id: manager.id },
+      data: { lastLoginDate: DateUtils.nowString('YYYY-MM-DD hh:mm') },
+    });
+    manager.password = '';
+    return manager;
   }
 }

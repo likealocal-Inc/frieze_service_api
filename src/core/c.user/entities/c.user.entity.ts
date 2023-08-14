@@ -6,6 +6,7 @@ export class CUserEntity implements User {
   updated: Date;
   name: string;
   email: string;
+  phone: string;
   isAuth: boolean;
   else01: string;
   else02: string;

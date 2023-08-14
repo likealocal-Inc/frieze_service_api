@@ -9,17 +9,14 @@ import axios from 'axios';
 import { PaymentEntity } from './entities/payment.entity';
 import { OrderEntity } from './entities/order.entity';
 import { SecurityUtils } from 'src/libs/core/utils/security.utils';
-import { Response } from 'express';
-import { Prisma } from '@prisma/client';
 
 export enum STATUS {
   PAYMENT = 'PAYMENT',
-  DISPATCH_REQUEST = 'DISPATCH_REQUEST',
-  CANCEL_REQUEST = 'CANCEL_REQUEST',
-  CANCEL_DONE = 'CANCEL_DONE',
-  DISPATCH_DONE = 'DISPATCH_DONE',
+  CANCEL = 'CANCEL',
+  DISPATCH = 'DISPATCH',
   DONE = 'DONE',
 }
+
 export function isValidSTATUS(value: any): value is STATUS {
   return Object.values(STATUS).includes(value);
 }
@@ -67,8 +64,6 @@ export class OrderService {
       dataJson.txTid,
     );
 
-    console.log(paymentEntity);
-
     // 결제처리
     const paymentResult = await this.runPayment(
       dataJson.txTid,
@@ -85,6 +80,7 @@ export class OrderService {
           ...dbData,
           approvalDate: now,
           status: STATUS.PAYMENT.toString(),
+          paymentDate: now,
         },
       });
 
@@ -243,24 +239,14 @@ export class OrderService {
       },
     );
 
-    console.log('--------------------------');
-    console.log(res2.data);
-    console.log('--------------------------');
-
     if (res2.data.ok === false) {
-      console.log('fail');
-      console.log(res2.data);
       throw new CustomException(
         ExceptionCodeList.PAYMENT.WRONG,
         `결제검증오류[${res2.data}]`,
       );
     }
 
-    console.log(res2.data.data);
-    console.log(paymentId, authToken, signature, txTid);
     if (res2.data.data !== signature) {
-      console.log('fail - 2');
-      console.log(res2.data);
       throw new CustomException(
         ExceptionCodeList.PAYMENT.WRONG,
         `결제검증오류 signature불일치 [${res2.data}]`,
@@ -357,7 +343,7 @@ export class OrderService {
     }
   }
 
-  async paymentAdminCancel(orderId, type, reason) {
+  async paymentAdminCancel(orderId, managerId, type, reason) {
     let paymentEntity;
     let cancelRes: any;
 
@@ -399,7 +385,12 @@ export class OrderService {
           await tx.payment.update({
             where: { id: paymentEntity.id },
             data: {
-              adminCancelInfo: JSON.stringify({ type, reason }),
+              adminCancelInfo: JSON.stringify({
+                type,
+                reason,
+                managerId,
+                cancelDate: DateUtils.nowString('YYYYMMDD hh:mm'),
+              }),
               cancelInfo: JSON.stringify(resData),
             },
           });
@@ -407,7 +398,10 @@ export class OrderService {
           // 취소상태값 업데이트
           await tx.order.update({
             where: { id: paymentEntity.orderId },
-            data: { status: 'CANCEL' },
+            data: {
+              status: STATUS.CANCEL,
+              canceltDate: DateUtils.nowString('YYYY-MM-DD hh:mm'),
+            },
           });
         });
         return resData;
@@ -466,7 +460,10 @@ export class OrderService {
           // 취소상태값 업데이트
           await tx.order.update({
             where: { id: paymentEntity.orderId },
-            data: { status: 'CANCEL' },
+            data: {
+              status: STATUS.CANCEL,
+              canceltDate: DateUtils.nowString('YYYY-MM-DD hh:mm'),
+            },
           });
         });
         return resData;

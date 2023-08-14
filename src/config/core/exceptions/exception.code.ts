@@ -63,6 +63,18 @@ export const ExceptionCodeList = {
       HttpStatus.BAD_REQUEST,
     ),
   },
+  MANAGER: {
+    ALREADY_EXIST_MANAGER: new ExceptionCode(
+      'ALREADY_EXIST_USER',
+      '이미 사용자 존재',
+      HttpStatus.BAD_REQUEST,
+    ),
+    FAIL_LOGIN: new ExceptionCode(
+      'FAIL_LOGIN',
+      '로그인 실패 오류',
+      HttpStatus.BAD_REQUEST,
+    ),
+  },
   COMMON: {
     WRONG_REQUEST: new ExceptionCode(
       'WRONG_REQUEST',

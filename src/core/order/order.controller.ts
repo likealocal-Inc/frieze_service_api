@@ -121,6 +121,7 @@ export class OrderController {
       true,
       await this.orderService.paymentAdminCancel(
         body.id,
+        body.managerId,
         body.type,
         body.reason,
       ),

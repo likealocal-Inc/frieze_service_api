@@ -5,6 +5,7 @@ import { APIResponseObj, HttpUtils } from 'src/libs/core/utils/http.utils';
 import { UpdateAuthUserDto } from './dto/update.auth.user.dto';
 import { CustomException } from 'src/config/core/exceptions/custom.exception';
 import { ExceptionCodeList } from 'src/config/core/exceptions/exception.code';
+import { CreateCManagerDto } from './dto/create.manager.dto';
 
 /**
  * 사용자
@@ -103,6 +104,32 @@ export class CUserController {
     return HttpUtils.makeAPIResponse(
       true,
       await this.cUserService.updateAuth(updateCUserDto),
+    );
+  }
+
+  /**
+   * 관리자 추가
+   * @param manager
+   * @returns
+   */
+  @Post('manager/add')
+  async addManager(@Body() manager: CreateCManagerDto) {
+    return HttpUtils.makeAPIResponse(
+      true,
+      await this.cUserService.addManager(manager),
+    );
+  }
+
+  /**
+   * 관리자 로그인
+   * @param body
+   * @returns
+   */
+  @Post('manager/login')
+  async loginManager(@Body() body: any) {
+    return HttpUtils.makeAPIResponse(
+      true,
+      await this.cUserService.loginManager(body.email, body.password),
     );
   }
 }

@@ -14,4 +14,8 @@ export class OrderEntity implements Order {
   priceInfo: string;
   status: string;
   approvalDate: string;
+  paymentDate: string;
+  canceltDate: string;
+  dispatchDate: string;
+  doneDate: string;
 }

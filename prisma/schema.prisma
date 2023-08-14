@@ -20,6 +20,7 @@ model User{
 
   name String
   email String @unique
+  phone String?
 
   isAuth Boolean @default(false)
 
@@ -50,6 +51,10 @@ model Order{
   status String @default("ORDER")
   approvalDate String?
 
+  paymentDate String?
+  canceltDate String?
+  dispatchDate String?
+  doneDate String?
 }
 
 
@@ -86,4 +91,20 @@ model Payment{
   cancelInfo String?
 
   adminCancelInfo String?
+}
+
+
+model Manager{
+  id      String  @id @default(uuid())
+
+  created DateTime @default(now())
+  updated DateTime @updatedAt
+
+  name String
+  email String @unique
+  password String
+
+  lastLoginDate String?
+  else01 String?
+  else02 String?  
 }
