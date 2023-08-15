@@ -74,7 +74,7 @@ export class OrderService {
 
     try {
       // 주문데이터 생성
-      const now = DateUtils.nowString('YYYY-MM-DD hh:mm');
+      const now = DateUtils.nowString('YYYY-MM-DD HH:mm');
       const order: OrderEntity = await this.prisma.order.create({
         data: {
           ...dbData,
@@ -400,7 +400,7 @@ export class OrderService {
             where: { id: paymentEntity.orderId },
             data: {
               status: STATUS.CANCEL,
-              canceltDate: DateUtils.nowString('YYYY-MM-DD hh:mm'),
+              canceltDate: DateUtils.nowString('YYYY-MM-DD HH:mm'),
             },
           });
         });
@@ -462,7 +462,7 @@ export class OrderService {
             where: { id: paymentEntity.orderId },
             data: {
               status: STATUS.CANCEL,
-              canceltDate: DateUtils.nowString('YYYY-MM-DD hh:mm'),
+              canceltDate: DateUtils.nowString('YYYY-MM-DD HH:mm'),
             },
           });
         });
@@ -509,13 +509,29 @@ export class OrderService {
    * @param size
    * @returns
    */
-  async list(page, size) {
+  async list(page, size, query) {
     const res = [];
-    const orders = await this.prisma.order.findMany({
-      skip: page * size,
-      take: size,
-      orderBy: { created: 'desc' },
-    });
+    let orders;
+    console.log(query);
+    if (+query.type < 0) {
+      orders = await this.prisma.order.findMany({
+        skip: page * size,
+        take: size,
+        orderBy: { created: 'desc' },
+      });
+    } else {
+      orders = await this.prisma.order.findMany({
+        where: {
+          created: {
+            gte: new Date(query.s).toISOString(),
+            lte: new Date(query.g).toISOString(),
+          },
+        },
+        skip: page * size,
+        take: size,
+        orderBy: { created: 'desc' },
+      });
+    }
 
     for (let index = 0; index < orders.length; index++) {
       const order = orders[index];

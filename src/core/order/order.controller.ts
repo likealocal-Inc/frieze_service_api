@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Patch, Param, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Get,
+  Query,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create.order.dto';
 import { UpdateOrderDto } from './dto/update.order.dto';
@@ -78,11 +86,11 @@ export class OrderController {
   }
 
   @Get('list/:page/:size')
-  async lis(@Param('page') page, @Param('size') size) {
+  async lis(@Param('page') page, @Param('size') size, @Query() query) {
     try {
       const res = HttpUtils.makeAPIResponse(
         true,
-        await this.orderService.list(+page, +size),
+        await this.orderService.list(+page, +size, query),
       );
       return res;
     } catch (error) {

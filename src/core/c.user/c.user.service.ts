@@ -25,7 +25,6 @@ export class CUserService {
    * @returns
    */
   async checkEmail(email: string): Promise<CUserEntity> {
-    console.log(email);
     try {
       // 이메일 복호화
       const emailStr = SecurityUtils.decryptText(email);
@@ -205,7 +204,7 @@ export class CUserService {
     }
     await this.prisma.manager.update({
       where: { id: manager.id },
-      data: { lastLoginDate: DateUtils.nowString('YYYY-MM-DD hh:mm') },
+      data: { lastLoginDate: DateUtils.nowString('YYYY-MM-DD HH:mm') },
     });
     manager.password = '';
     return manager;
