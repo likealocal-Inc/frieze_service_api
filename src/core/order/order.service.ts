@@ -84,8 +84,6 @@ export class OrderService {
         },
       });
 
-      console.log(order);
-
       // 결제 정보 업데이트
       paymentEntity = await this.prisma.payment.update({
         where: { id: dataJson.id },
@@ -159,6 +157,27 @@ export class OrderService {
     }
   }
 
+  /**
+   * 주문번호로 사용자와 주문정보 조회
+   * @param orderId
+   * @returns
+   */
+  async findOrderWithUserById(orderId: string) {
+    try {
+      const order = await this.prisma.order.findFirst({
+        where: { id: orderId },
+      });
+      const user = await this.prisma.user.findFirst({
+        where: { id: order.userId },
+      });
+      return {
+        user,
+        order,
+      };
+    } catch (error) {
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
+    }
+  }
   /**
    * 주문 업데이트하기
    * @param id
@@ -514,7 +533,7 @@ export class OrderService {
     let orders;
     let where = {};
     if (query.status === 'ALL') {
-      where = { 1: 1 };
+      where = { id: { not: '' } };
     } else {
       where = { status: query.status };
     }

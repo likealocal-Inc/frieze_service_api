@@ -21,6 +21,7 @@ export class OrderController {
 
   /**
    * 주문데이터 생성 -> 결제정보 업데이트
+   *
    * @param createOrderDto
    * @returns
    */
@@ -45,6 +46,14 @@ export class OrderController {
     return HttpUtils.makeAPIResponse(
       true,
       await this.orderService.findById(id),
+    );
+  }
+
+  @Get('orderWithUser/:orderId')
+  async orderWithUser(@Param('orderId') orderId: string) {
+    return HttpUtils.makeAPIResponse(
+      true,
+      await this.orderService.findOrderWithUserById(orderId),
     );
   }
 
