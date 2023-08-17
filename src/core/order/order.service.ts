@@ -512,9 +512,15 @@ export class OrderService {
   async list(page, size, query) {
     const res = [];
     let orders;
-    console.log(query);
+    let where = {};
+    if (query.status === 'ALL') {
+      where = { 1: 1 };
+    } else {
+      where = { status: query.status };
+    }
     if (+query.type < 0) {
       orders = await this.prisma.order.findMany({
+        where,
         skip: page * size,
         take: size,
         orderBy: { created: 'desc' },
@@ -522,6 +528,7 @@ export class OrderService {
     } else {
       orders = await this.prisma.order.findMany({
         where: {
+          ...where,
           created: {
             gte: new Date(query.s).toISOString(),
             lte: new Date(query.g).toISOString(),
