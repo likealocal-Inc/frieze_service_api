@@ -606,12 +606,21 @@ export class OrderService {
         orderBy: { created: 'desc' },
       });
     } else {
+      console.log(query.s, query.g);
+
+      const startDate = new Date(query.s);
+      const s1 = DateUtils.formatDate(startDate);
+
+      const endDate = new Date(query.g);
+      const s2 = DateUtils.formatDate(endDate);
+
+      console.log(s1, s2);
       orders = await this.prisma.order.findMany({
         where: {
           ...where,
-          created: {
-            gte: new Date(query.s).toISOString(),
-            lte: new Date(query.g).toISOString(),
+          approvalDate: {
+            gte: `${s1} 00:00`,
+            lte: `${s2} 23:59`,
           },
         },
         skip: page * size,
