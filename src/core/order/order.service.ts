@@ -144,6 +144,17 @@ export class OrderService {
     }
   }
 
+  async findByUserIdAndStatus(userId: string, status: string) {
+    try {
+      return await this.prisma.order.findMany({
+        where: { userId, status },
+        orderBy: { created: 'desc' },
+      });
+    } catch (error) {
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST, error);
+    }
+  }
+
   /**
    * 아이디로 조회
    * @param id

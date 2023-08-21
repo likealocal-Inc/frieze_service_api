@@ -41,6 +41,18 @@ export class OrderController {
     );
   }
 
+  @Get('userid/:id/:status')
+  async findByUserIdAndStatus(
+    @Param('id') id: string,
+    @Param('status') status: string,
+  ) {
+    console.log(status);
+    return HttpUtils.makeAPIResponse(
+      true,
+      await this.orderService.findByUserIdAndStatus(id, status),
+    );
+  }
+
   @Get(':id')
   async findById(@Param('id') id: string) {
     return HttpUtils.makeAPIResponse(
