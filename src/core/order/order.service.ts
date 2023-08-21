@@ -543,10 +543,24 @@ export class OrderService {
     const res = [];
     let orders;
     let where = {};
+    if (
+      query.email !== undefined &&
+      query.email !== null &&
+      query.email !== ''
+    ) {
+      const user = await this.prisma.user.findFirst({
+        where: { email: query.email },
+      });
+      if (user !== null) {
+        where = { userId: user.id };
+      } else {
+        where = { userId: 'NONE' };
+      }
+    }
     if (query.status === 'ALL') {
-      where = { id: { not: '' } };
+      where = { ...where, id: { not: '' } };
     } else {
-      where = { status: query.status };
+      where = { ...where, status: query.status };
     }
     if (+query.type < 0) {
       orders = await this.prisma.order.findMany({
