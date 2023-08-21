@@ -145,7 +145,6 @@ export class OrderController {
 
   @Post('payment/admin/cancel')
   async paymentAdminCancel(@Body() body: any) {
-    console.log(body);
     return HttpUtils.makeAPIResponse(
       true,
       await this.orderService.paymentAdminCancel(
@@ -154,6 +153,19 @@ export class OrderController {
         body.type,
         body.reason,
       ),
+    );
+  }
+
+  /**
+   * 어드민에서 완료 처리
+   * @param body
+   * @returns
+   */
+  @Post('payment/admin/done')
+  async paymentAdminDone(@Body() body: any) {
+    return HttpUtils.makeAPIResponse(
+      true,
+      await this.orderService.paymentAdminDone(body.id),
     );
   }
 

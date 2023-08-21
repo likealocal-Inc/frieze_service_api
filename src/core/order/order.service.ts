@@ -373,6 +373,14 @@ export class OrderService {
     }
   }
 
+  /**
+   * 관리자 취소 처리
+   * @param orderId
+   * @param managerId
+   * @param type
+   * @param reason
+   * @returns
+   */
   async paymentAdminCancel(orderId, managerId, type, reason) {
     let paymentEntity;
     let cancelRes: any;
@@ -445,6 +453,34 @@ export class OrderService {
       throw new CustomException(ExceptionCodeList.PAYMENT.WRONG);
     }
   }
+
+  /**
+   * 관리자 완료 처리
+   * @param orderId
+   * @param managerId
+   * @param type
+   * @param reason
+   * @returns
+   */
+  async paymentAdminDone(orderId) {
+    try {
+      // 취소 성공 후 처리
+      const resData = await this.prisma.$transaction(async (tx) => {
+        // 취소상태값 업데이트
+        await tx.order.update({
+          where: { id: orderId },
+          data: {
+            status: STATUS.DONE,
+            doneDate: DateUtils.nowString('YYYY-MM-DD HH:mm'),
+          },
+        });
+      });
+      return resData;
+    } catch (err) {
+      throw new CustomException(ExceptionCodeList.PAYMENT.WRONG);
+    }
+  }
+
   async paymentCancel(id) {
     let paymentEntity;
     let cancelRes: any;
