@@ -207,12 +207,10 @@ export class OrderService {
   }
 
   async paymentInit(price, email, tempKey) {
-    const payInfoCount = await this.prisma.payment.count({
+    const payInfo = await this.prisma.payment.findFirst({
       where: { email, tempKey },
     });
-    if (payInfoCount > 0) {
-      return false;
-    }
+
     const res: any = await axios.post(
       `${process.env.PAYMENT_URL}/api/nicepay/payment`,
       {
@@ -227,9 +225,18 @@ export class OrderService {
         },
       },
     );
-    const dbRea = await this.prisma.payment.create({
-      data: { ...res.data.data, email, tempKey },
-    });
+
+    let dbRea;
+    if (payInfo === undefined || payInfo === null) {
+      dbRea = await this.prisma.payment.create({
+        data: { ...res.data.data, email, tempKey },
+      });
+    } else {
+      dbRea = await this.prisma.payment.update({
+        where: { id: payInfo.id },
+        data: { ...res.data.data, email, tempKey },
+      });
+    }
     return dbRea;
   }
 

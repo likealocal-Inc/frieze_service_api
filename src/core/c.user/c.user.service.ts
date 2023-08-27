@@ -43,7 +43,7 @@ export class CUserService {
     const users = await this.prisma.user.findMany({
       skip: page * size,
       take: size,
-      orderBy: { created: 'desc' },
+      orderBy: { email: 'asc' },
     });
     const total = await this.prisma.user.count();
     const totalPage = Math.ceil(total / size);

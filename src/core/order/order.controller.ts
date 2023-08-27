@@ -136,7 +136,6 @@ export class OrderController {
 
   @Post('payment/cancel')
   async paymentCancel(@Body() body: any) {
-    console.log(body);
     return HttpUtils.makeAPIResponse(
       true,
       await this.orderService.paymentCancel(body.id),
