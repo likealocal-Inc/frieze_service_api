@@ -168,6 +168,14 @@ export class OrderController {
     );
   }
 
+  @Post('payment/admin/dispatch')
+  async paymentAdminDispatch(@Body() body: any) {
+    return HttpUtils.makeAPIResponse(
+      true,
+      await this.orderService.paymentAdminDispatch(body.id),
+    );
+  }
+
   // @Patch('payment/payresult')
   // async payresult(@Body() body: any) {
   //   try {

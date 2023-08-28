@@ -488,6 +488,25 @@ export class OrderService {
     }
   }
 
+  async paymentAdminDispatch(orderId) {
+    try {
+      // 취소 성공 후 처리
+      const resData = await this.prisma.$transaction(async (tx) => {
+        // 취소상태값 업데이트
+        await tx.order.update({
+          where: { id: orderId },
+          data: {
+            status: STATUS.DISPATCH,
+            dispatchDate: DateUtils.nowString('YYYY-MM-DD HH:mm'),
+          },
+        });
+      });
+      return resData;
+    } catch (err) {
+      throw new CustomException(ExceptionCodeList.PAYMENT.WRONG);
+    }
+  }
+
   async paymentCancel(id) {
     let paymentEntity;
     let cancelRes: any;
