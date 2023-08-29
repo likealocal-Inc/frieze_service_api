@@ -82,6 +82,10 @@ export class OrderService {
           approvalDate: now,
           status: STATUS.PAYMENT.toString(),
           paymentDate: now,
+          canceltDate: '',
+          dispatchDate: '',
+          doneDate: '',
+          getonDate: '',
         },
       });
 
