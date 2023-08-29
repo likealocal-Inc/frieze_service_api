@@ -52,9 +52,10 @@ model Order{
   approvalDate String?
 
   paymentDate String?
-  canceltDate String?
   dispatchDate String?
+  getonDate String?
   doneDate String?
+  canceltDate String?
 }
 
 

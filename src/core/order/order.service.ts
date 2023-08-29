@@ -14,6 +14,7 @@ export enum STATUS {
   PAYMENT = 'PAYMENT',
   CANCEL = 'CANCEL',
   DISPATCH = 'DISPATCH',
+  GETON = 'GETON',
   DONE = 'DONE',
 }
 
@@ -488,6 +489,32 @@ export class OrderService {
     }
   }
 
+  /**
+   * 탑승완료
+   * @param orderId
+   * @returns
+   */
+  async paymentAdminGetOn(orderId) {
+    try {
+      // 취소 성공 후 처리
+      const resData = await this.prisma.$transaction(async (tx) => {
+        // 취소상태값 업데이트
+        await tx.order.update({
+          where: { id: orderId },
+          data: {
+            status: STATUS.GETON,
+            getonDate: DateUtils.nowString('YYYY-MM-DD HH:mm'),
+            doneDate: '', // 탑승완료 -> 완료데이터 제거
+            canceltDate: '', // 탑승완료 -> 취소데이터 제거
+          },
+        });
+      });
+      return resData;
+    } catch (err) {
+      throw new CustomException(ExceptionCodeList.PAYMENT.WRONG);
+    }
+  }
+
   async paymentAdminDispatch(orderId) {
     try {
       // 취소 성공 후 처리
@@ -498,6 +525,8 @@ export class OrderService {
           data: {
             status: STATUS.DISPATCH,
             dispatchDate: DateUtils.nowString('YYYY-MM-DD HH:mm'),
+            getonDate: '',
+            doneDate: '',
           },
         });
       });
@@ -507,6 +536,11 @@ export class OrderService {
     }
   }
 
+  /**
+   *
+   * @param id
+   * @returns
+   */
   async paymentCancel(id) {
     let paymentEntity;
     let cancelRes: any;

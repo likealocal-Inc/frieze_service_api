@@ -168,11 +168,29 @@ export class OrderController {
     );
   }
 
+  /**
+   * 배차완료
+   * @param body
+   * @returns
+   */
   @Post('payment/admin/dispatch')
   async paymentAdminDispatch(@Body() body: any) {
     return HttpUtils.makeAPIResponse(
       true,
       await this.orderService.paymentAdminDispatch(body.id),
+    );
+  }
+
+  /**
+   * 탑승완료
+   * @param body
+   * @returns
+   */
+  @Post('payment/admin/geton')
+  async paymentAdminGeton(@Body() body: any) {
+    return HttpUtils.makeAPIResponse(
+      true,
+      await this.orderService.paymentAdminGetOn(body.id),
     );
   }
 
