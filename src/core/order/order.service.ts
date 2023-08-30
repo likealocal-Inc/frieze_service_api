@@ -216,6 +216,7 @@ export class OrderService {
       where: { email, tempKey },
     });
 
+    console.log('결제초기 정보 요청');
     const res: any = await axios.post(
       `${process.env.PAYMENT_URL}/api/nicepay/payment`,
       {

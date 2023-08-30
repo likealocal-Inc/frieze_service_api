@@ -122,16 +122,21 @@ export class OrderController {
 
   @Post('payment/init')
   async paymentInit(@Body() body: any) {
-    if (body.kdjifnkd44333 === null || body.kdjifnkd44333 === undefined) {
-      return false;
-    }
-    const param = JSON.parse(SecurityUtils.decryptText(body.kdjifnkd44333));
+    try {
+      if (body.kdjifnkd44333 === null || body.kdjifnkd44333 === undefined) {
+        return false;
+      }
+      const param = JSON.parse(SecurityUtils.decryptText(body.kdjifnkd44333));
 
-    return await this.orderService.paymentInit(
-      param.price,
-      param.email,
-      param.tempKey,
-    );
+      return await this.orderService.paymentInit(
+        param.price,
+        param.email,
+        param.tempKey,
+      );
+    } catch (err) {
+      console.log(err);
+      throw new CustomException(ExceptionCodeList.COMMON.WRONG_REQUEST);
+    }
   }
 
   @Post('payment/cancel')
