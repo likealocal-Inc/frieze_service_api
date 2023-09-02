@@ -52,7 +52,6 @@ export class OrderService {
    * @returns
    */
   async create(createOrderDto: CreateOrderDto) {
-    console.log(createOrderDto);
     const { aeindifo, ...dbData } = createOrderDto;
     const data = SecurityUtils.decryptText(aeindifo);
     const dataJson = JSON.parse(data);

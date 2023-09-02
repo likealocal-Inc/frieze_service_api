@@ -15,8 +15,8 @@ export class EmailService {
     this.mail = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'hanblues202201@gmail.com',
-        pass: 'xuxttjesmuwgiyze',
+        user: 'likealocal.manager.kr@gmail.com',
+        pass: 'lvetsdfubeojbdhf',
       },
     });
   }

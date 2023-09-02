@@ -46,7 +46,6 @@ export class OrderController {
     @Param('id') id: string,
     @Param('status') status: string,
   ) {
-    console.log(status);
     return HttpUtils.makeAPIResponse(
       true,
       await this.orderService.findByUserIdAndStatus(id, status),
