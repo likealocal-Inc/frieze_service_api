@@ -13,26 +13,22 @@ export class ExceptionCode {
 
 export const ExceptionCodeList = {
   PAYMENT: {
-    WRONG: new ExceptionCode(
-      'WRONG',
-      '결제관련 데이터 오류발생',
-      HttpStatus.BAD_REQUEST,
-    ),
+    WRONG: new ExceptionCode('WRONG', 'payment fail', HttpStatus.BAD_REQUEST),
   },
   AUTH: {
     UNAUTHORIZED: new ExceptionCode(
       'UNAUTHORIZED',
-      '인증오류',
+      'auth fail',
       HttpStatus.UNAUTHORIZED,
     ),
     WRONG_PASSWORD: new ExceptionCode(
       'WRONG_PASSWORD',
-      '패스워드 오류',
+      'password fail',
       HttpStatus.UNAUTHORIZED,
     ),
     NO_SESSION_KEY: new ExceptionCode(
       'NO_SESSION_KEY',
-      '세션키가 없음',
+      'no session key',
       HttpStatus.UNAUTHORIZED,
     ),
     WRONG_SESSION_KEY: new ExceptionCode(
