@@ -146,6 +146,14 @@ export class OrderController {
     );
   }
 
+  @Post('payment/cancel/orderid')
+  async paymentCancelByOrderId(@Body() body: any) {
+    return HttpUtils.makeAPIResponse(
+      true,
+      await this.orderService.paymentCancel(body.id, true),
+    );
+  }
+
   @Post('payment/admin/cancel')
   async paymentAdminCancel(@Body() body: any) {
     return HttpUtils.makeAPIResponse(

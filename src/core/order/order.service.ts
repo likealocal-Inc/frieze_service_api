@@ -545,15 +545,23 @@ export class OrderService {
    * @param id
    * @returns
    */
-  async paymentCancel(id) {
+  async paymentCancel(id, isOrderId = false) {
     let paymentEntity;
     let cancelRes: any;
     try {
-      paymentEntity = await this.prisma.payment.findFirst({
-        where: { id },
-      });
+      if (isOrderId) {
+        paymentEntity = await this.prisma.payment.findFirst({
+          where: { orderId: id },
+        });
+      } else {
+        paymentEntity = await this.prisma.payment.findFirst({
+          where: { id },
+        });
+      }
 
-      // 실제 결제 처리
+      console.log(paymentEntity);
+
+      // 실제 결제 처리/
       cancelRes = await axios.post(
         `${process.env.PAYMENT_URL}/api/nicepay/cancel`,
         {
@@ -579,11 +587,11 @@ export class OrderService {
       const resData = cancelRes.data;
 
       if (resData.ok) {
-        // 취소 성공 후 처리
+        // 취소 성공 후 처리.
         await this.prisma.$transaction(async (tx) => {
           // 취소정보 추가
           await tx.payment.update({
-            where: { id },
+            where: { id: paymentEntity.id },
             data: { cancelInfo: JSON.stringify(resData) },
           });
 
